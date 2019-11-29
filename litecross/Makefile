@@ -48,14 +48,7 @@ GCC_CONFIG_FOR_TARGET += --with-float=hard
 endif
 
 ifneq ($(LIBTOOL),)
-
-ifeq  ($(LIBTOOL_STATIC),)
-LIBTOOL_STATIC = $(LIBTOOL)-static
-endif
-
-LIBTOOL_ARG        = LIBTOOL=$(LIBTOOL)
-LIBTOOL_STATIC_ARG = LIBTOOL=$(LIBTOOL_STATIC)
-
+LIBTOOL_ARG = LIBTOOL=$(LIBTOOL)
 endif
 
 MAKE += MULTILIB_OSDIRNAMES=
@@ -64,11 +57,13 @@ MAKE += ac_cv_prog_lex_root=lex.yy.c
 MAKE += MAKEINFO=false
 
 FULL_BINUTILS_CONFIG = \
+	--disable-separate-code \
 	$(COMMON_CONFIG) $(BINUTILS_CONFIG) $(TOOLCHAIN_CONFIG) \
 	--disable-werror \
 	--target=$(TARGET) --prefix= \
 	--libdir=/lib --disable-multilib \
-	--with-sysroot=$(SYSROOT)
+	--with-sysroot=$(SYSROOT) \
+	--enable-deterministic-archives
 
 FULL_GCC_CONFIG = --enable-languages=c,c++ \
 	$(GCC_CONFIG_FOR_TARGET) \
@@ -81,7 +76,6 @@ FULL_GCC_CONFIG = --enable-languages=c,c++ \
 	--disable-libmudflap --disable-libsanitizer \
 	--disable-gnu-indirect-function \
 	--disable-libmpx \
-	--enable-deterministic-archives \
 	--enable-libstdcxx-time
 
 FULL_MUSL_CONFIG = $(MUSL_CONFIG) \
@@ -207,7 +201,7 @@ obj_binutils/.lc_configured: | obj_binutils src_binutils
 	touch $@
 
 obj_binutils/.lc_built: | obj_binutils/.lc_configured
-	cd obj_binutils && $(MAKE) MAKE="$(MAKE) $(LIBTOOL_STATIC_ARG)" all
+	cd obj_binutils && $(MAKE) MAKE="$(MAKE) $(LIBTOOL_ARG)" all
 	touch $@
 
 obj_gcc/.lc_configured: | obj_gcc src_gcc
@@ -245,7 +239,7 @@ install-musl: | obj_musl/.lc_built
 	cd obj_musl && $(MAKE) $(MUSL_VARS) DESTDIR=$(DESTDIR)$(OUTPUT)$(SYSROOT) install
 
 install-binutils: | obj_binutils/.lc_built
-	cd obj_binutils && $(MAKE) MAKE="$(MAKE) $(LIBTOOL_STATIC_ARG)" DESTDIR=$(DESTDIR)$(OUTPUT) install
+	cd obj_binutils && $(MAKE) MAKE="$(MAKE) $(LIBTOOL_ARG)" DESTDIR=$(DESTDIR)$(OUTPUT) install
 
 install-gcc: | obj_gcc/.lc_built
 	cd obj_gcc && $(MAKE) MAKE="$(MAKE) $(LIBTOOL_ARG)" DESTDIR=$(DESTDIR)$(OUTPUT) install
