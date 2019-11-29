@@ -1,8 +1,8 @@
 diff --git a/src/network/resolvconf.c b/src/network/resolvconf.c
-index 4c3e4c4b..5403b0b0 100644
+index ceabf08..8de9c8b 100644
 --- a/src/network/resolvconf.c
 +++ b/src/network/resolvconf.c
-@@ -17,7 +17,7 @@ int __get_resolv_conf(struct resolvconf *conf, char *search, size_t search_sz)
+@@ -18,7 +18,7 @@ int __get_resolv_conf(struct resolvconf *conf, char *search, size_t search_sz)
  	conf->attempts = 2;
  	if (search) *search = 0;
  

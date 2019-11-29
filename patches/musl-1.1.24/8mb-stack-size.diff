@@ -1,0 +1,13 @@
+diff --git a/src/internal/pthread_impl.h b/src/internal/pthread_impl.h
+index 5742dfc..2c0d203 100644
+--- a/src/internal/pthread_impl.h
++++ b/src/internal/pthread_impl.h
+@@ -179,7 +179,7 @@ extern hidden volatile int __thread_list_lock;
+ extern hidden unsigned __default_stacksize;
+ extern hidden unsigned __default_guardsize;
+ 
+-#define DEFAULT_STACK_SIZE 131072
++#define DEFAULT_STACK_SIZE (8<<20)
+ #define DEFAULT_GUARD_SIZE 8192
+ 
+ #define DEFAULT_STACK_MAX (8<<20)
