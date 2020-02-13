@@ -1,0 +1,12 @@
+diff --git a/src/network/accept.c b/src/network/accept.c
+index a92406fa..ec77b1be 100644
+--- a/src/network/accept.c
++++ b/src/network/accept.c
+@@ -3,5 +3,6 @@
+ 
+ int accept(int fd, struct sockaddr *restrict addr, socklen_t *restrict len)
+ {
+-	return socketcall_cp(accept, fd, addr, len, 0, 0, 0);
++	//android seccomp blocks accept syscall, only accept4 is whitelisted
++	return socketcall_cp(accept4, fd, addr, len, 0, 0, 0);
+ }
