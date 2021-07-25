@@ -7,7 +7,7 @@ name: Release Binaries
 
 jobs:
   build:
-    name: Upload Release Asset
+    name: Building cross compiler for android-aarch64
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
