@@ -3,11 +3,14 @@
 TARGET="aarch64-linux-musl"
 OUTPUT="/opt/cross/"
 
+# Fix for possible inconsistencies of CPU instructions set
+CFLAGS="-march=x86-64"
+CXXFLAGS="$CFLAGS"
+
 cp config.mak.dist config.mak
 
 echo "OUTPUT = $OUTPUT" >> config.mak
-# Fix for possible inconsistencies of CPU instructions set
-echo "GCC_CONFIG += -march=x86-64" >> config.mak
+echo "COMMON_CONFIG += CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\"" >> config.mak
 
 # Compile TARGET and install
 make
