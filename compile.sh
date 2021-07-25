@@ -6,8 +6,6 @@ OUTPUT="/opt/cross/"
 cp config.mak.dist config.mak
 
 echo "OUTPUT = $OUTPUT" >> config.mak
-# Improve build time
-echo "GCC_CONFIG += --enable-languages=c,c++" >> config.mak
 # Fix for possible inconsistencies of CPU instructions set
 echo "GCC_CONFIG += -march=x86-64" >> config.mak
 
