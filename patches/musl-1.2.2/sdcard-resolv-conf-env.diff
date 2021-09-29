@@ -1,0 +1,113 @@
+diff --git a/src/network/getnameinfo.c b/src/network/getnameinfo.c
+index 949e1811..85f38ccc 100644
+--- a/src/network/getnameinfo.c
++++ b/src/network/getnameinfo.c
+@@ -44,10 +44,18 @@ static void mkptr6(char *s, const unsigned char *ip)
+ 
+ static void reverse_hosts(char *buf, const unsigned char *a, unsigned scopeid, int family)
+ {
++	char *filename_hosts;
+ 	char line[512], *p, *z;
+ 	unsigned char _buf[1032], atmp[16];
+ 	struct address iplit;
+-	FILE _f, *f = __fopen_rb_ca("/etc/hosts", &_f, _buf, sizeof _buf);
++
++	// PATCH: allow specifying where hosts is
++	filename_hosts = "/etc/hosts";
++	if(getenv("LESMI_HOSTS_DIR")) {
++		filename_hosts = getenv("LESMI_HOSTS_DIR");
++	}
++
++	FILE _f, *f = __fopen_rb_ca(filename_hosts, &_f, _buf, sizeof _buf);
+ 	if (!f) return;
+ 	if (family == AF_INET) {
+ 		memcpy(atmp+12, a, 4);
+@@ -84,10 +92,18 @@ static void reverse_hosts(char *buf, const unsigned char *a, unsigned scopeid, i
+ 
+ static void reverse_services(char *buf, int port, int dgram)
+ {
++	char *filename_services;
+ 	unsigned long svport;
+ 	char line[128], *p, *z;
+ 	unsigned char _buf[1032];
+-	FILE _f, *f = __fopen_rb_ca("/etc/services", &_f, _buf, sizeof _buf);
++
++	// PATCH: allow specifying where services is
++	filename_services = "/etc/services";
++	if(getenv("LESMI_SERVICES_DIR")) {
++		filename_services = getenv("LESMI_SERVICES_DIR");
++	}
++
++	FILE _f, *f = __fopen_rb_ca(filename_services, &_f, _buf, sizeof _buf);
+ 	if (!f) return;
+ 	while (fgets(line, sizeof line, f)) {
+ 		if ((p=strchr(line, '#'))) *p++='\n', *p=0;
+diff --git a/src/network/lookup_name.c b/src/network/lookup_name.c
+index aa558c19..59bc7f46 100644
+--- a/src/network/lookup_name.c
++++ b/src/network/lookup_name.c
+@@ -52,7 +52,15 @@ static int name_from_hosts(struct address buf[static MAXADDRS], char canon[stati
+ 	size_t l = strlen(name);
+ 	int cnt = 0, badfam = 0, have_canon = 0;
+ 	unsigned char _buf[1032];
+-	FILE _f, *f = __fopen_rb_ca("/etc/hosts", &_f, _buf, sizeof _buf);
++
++	// PATCH: allow specifying where hosts is
++	char *filename_hosts;
++	filename_hosts = "/etc/hosts";
++	if(getenv("LESMI_HOSTS_DIR")) {
++		filename_hosts = getenv("LESMI_HOSTS_DIR");
++	}
++
++	FILE _f, *f = __fopen_rb_ca(filename_hosts, &_f, _buf, sizeof _buf);
+ 	if (!f) switch (errno) {
+ 	case ENOENT:
+ 	case ENOTDIR:
+diff --git a/src/network/lookup_serv.c b/src/network/lookup_serv.c
+index ae382778..78731aeb 100644
+--- a/src/network/lookup_serv.c
++++ b/src/network/lookup_serv.c
+@@ -69,8 +69,15 @@ int __lookup_serv(struct service buf[static MAXSERVS], const char *name, int pro
+ 
+ 	size_t l = strlen(name);
+ 
++	// PATCH: allow specifying where services is
++	char *filename_services;
++	filename_services = "/etc/services";
++	if(getenv("LESMI_SERVICES_DIR")) {
++		filename_services = getenv("LESMI_SERVICES_DIR");
++	}
++
+ 	unsigned char _buf[1032];
+-	FILE _f, *f = __fopen_rb_ca("/etc/services", &_f, _buf, sizeof _buf);
++	FILE _f, *f = __fopen_rb_ca(filename_services, &_f, _buf, sizeof _buf);
+ 	if (!f) switch (errno) {
+ 	case ENOENT:
+ 	case ENOTDIR:
+diff --git a/src/network/resolvconf.c b/src/network/resolvconf.c
+index ceabf080..ceaccf2c 100644
+--- a/src/network/resolvconf.c
++++ b/src/network/resolvconf.c
+@@ -8,6 +8,7 @@
+ 
+ int __get_resolv_conf(struct resolvconf *conf, char *search, size_t search_sz)
+ {
++	char *filename_resolv_conf;
+ 	char line[256];
+ 	unsigned char _buf[256];
+ 	FILE *f, _f;
+@@ -18,7 +19,13 @@ int __get_resolv_conf(struct resolvconf *conf, char *search, size_t search_sz)
+ 	conf->attempts = 2;
+ 	if (search) *search = 0;
+ 
+-	f = __fopen_rb_ca("/etc/resolv.conf", &_f, _buf, sizeof _buf);
++	// PATCH: allow specifying where resolv.conf is
++	filename_resolv_conf = "/etc/resolv.conf";
++	if(getenv("LESMI_RESOLV_CONF_DIR")) {
++		filename_resolv_conf = getenv("LESMI_RESOLV_CONF_DIR");
++	}
++
++	f = __fopen_rb_ca(filename_resolv_conf, &_f, _buf, sizeof _buf);
+ 	if (!f) switch (errno) {
+ 	case ENOENT:
+ 	case ENOTDIR:
