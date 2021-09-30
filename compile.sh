@@ -12,9 +12,10 @@ cp config.mak.dist config.mak
 echo "OUTPUT = $OUTPUT" >> config.mak
 echo "COMMON_CONFIG += CFLAGS=\"$CFLAGS\" CXXFLAGS=\"$CXXFLAGS\"" >> config.mak
 
+
 # Compile TARGET and install
-make
-sudo make install
+make &>> ./console.log
+sudo make install &>> ./console.log
 
 # Compress TARGET
 sudo tar -cJf "$TARGET.tar.xz" -C "$OUTPUT" .
