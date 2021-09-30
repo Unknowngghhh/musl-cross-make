@@ -35,3 +35,8 @@ jobs:
           asset_path: ./aarch64-linux-musl.tar.xz
           asset_name: aarch64-linux-musl.tar.xz
           asset_content_type: application/x-xz
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          name: console.log
+          path: ./console.log
