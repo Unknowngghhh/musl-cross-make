@@ -1,4 +1,10 @@
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      tagname:
+      description: 'tagname'
+      required: true
+      default: '1.2.2'
 
 name: Release Binaries
 
@@ -19,8 +25,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ github.event.inputs.tagname }}
+          name: Release ${{ github.event.inputs.tagname }}
 
       - name: Upload Release Asset
         id: upload-release-asset
