@@ -2,9 +2,9 @@ on:
   workflow_dispatch:
     inputs:
       tagname:
-      description: 'tagname'
-      required: true
-      default: '1.2.2'
+        description: 'tagname'
+        required: true
+        default: '1.2.2'
 
 name: Release Binaries
 
